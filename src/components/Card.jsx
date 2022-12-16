@@ -2,7 +2,6 @@ import DownloadForOfflineOutlinedIcon from "@mui/icons-material/DownloadForOffli
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { format } from "timeago.js";
 import axios from "axios";
 
 const Max = styled.div`
@@ -92,7 +91,7 @@ const Card = ({ type, video }) => {
 
               <ChannelName>{channel.ChannelName}</ChannelName>
               <Info>
-                {video.views} views • {format(video.createdAt)}
+                {video.views} views • {video.createdAt}
               </Info>
             </Texts>
           </Details>
