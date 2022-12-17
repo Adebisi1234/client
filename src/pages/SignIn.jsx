@@ -6,6 +6,7 @@ import { loginFailure, loginStart, loginSuccess } from "../redux/userSlice";
 import { auth, provider } from "../firebase";
 import { signInWithPopup } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
+import { Backend } from "../utils/backend";
 
 const Container = styled.div`
   display: flex;
@@ -80,10 +81,10 @@ const SignIn = () => {
     e.preventDefault();
     dispatch(loginStart());
     try {
-      const res = await axios.post(
-        "https://handsome-pink-hippo.cyclic.app/auth/api/signin",
-        { name, password }
-      );
+      const res = await axios.post(`${Backend}/auth/signin`, {
+        name,
+        password,
+      });
       dispatch(loginSuccess(res.data));
       navigate("/");
     } catch (err) {
@@ -96,7 +97,7 @@ const SignIn = () => {
     signInWithPopup(auth, provider)
       .then((result) => {
         axios
-          .post("https://handsome-pink-hippo.cyclic.app/api/auth/google", {
+          .post(`${Backend}auth/google`, {
             name: result.user.displayName,
             email: result.user.email,
             img: result.user.photoURL,

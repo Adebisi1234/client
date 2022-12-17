@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import axios from "axios";
+import TimeAgo from "timeago-react";
 
 const Max = styled.div`
   position: relative;
@@ -50,6 +51,17 @@ const Texts = styled.div`
   width: 100%;
 `;
 
+const Temp = styled.div`
+  width: 100%;
+  height: 100vh;
+  background-color: ${({ theme }) => theme.bgLighter};
+  color: ${({ theme }) => theme.text};
+  font-size: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
 const Title = styled.h1`
   font-size: 16px;
   font-weight: 500;
@@ -68,38 +80,71 @@ const Info = styled.div`
 `;
 
 const Card = ({ type, video }) => {
-  const [channel, setChannel] = useState({});
-
+  const [channel, setChannel] = useState({
+    _id: "639c875b243fca3f63ef8fa4",
+    name: "test",
+    email: "test@gmail.com",
+    password: "$2a$10$P5ekrn5tPLCWnC4bBNjyK.Hg6CY0Vv9eUjKc5yil7iNgTVMaij/1K",
+    subscribers: 0,
+    subscribedUsers: [],
+    fromGoogle: false,
+    createdAt: "2022-12-16T14:57:31.268Z",
+    updatedAt: "2022-12-16T14:57:31.268Z",
+    __v: 0,
+    img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHN8VZBh3H-DJG7Cp3kfbRDnd7UF932qrhJMVqjA7uJw&s",
+  });
+  const [Loading, setLoading] = useState(true);
+  const [id, setId] = useState(isNull(video.userId));
+  function isNull(id) {
+    if (!id) {
+      return "639cdf7a75a30fb7c9ae2bfb";
+    } else return id;
+  }
   useEffect(() => {
     const fetchChannel = async () => {
       const res = await axios.get(
-        `https://handsome-pink-hippo.cyclic.app/api/users/find/${video.userId}`
+        `https://handsome-pink-hippo.cyclic.app/api/users/find/${id}`
       );
-      setChannel(res.data);
+      if (res.data === null) {
+        console.log("Null");
+      } else {
+        setChannel(await res.data);
+      }
+      // console.log("res", res.data);
+      console.log(channel);
+      setLoading(false);
     };
     fetchChannel();
   }, [video.userId]);
   return (
     <Max>
-      <Link to={`/video/${video._id}`} style={{ textDecoration: "none" }}>
-        <Container type={type}>
-          <Image type={type} src={video.imgUrl} />
-          <Details type={type}>
-            <ChannelImage type={type} src={channel.img} />
-            <Texts>
-              <Title>{video.title}</Title>
+      <>
+        {Loading && <Temp>Loading</Temp>}
+        {!Loading && (
+          <>
+            <Link to={`/video/${video._id}`} style={{ textDecoration: "none" }}>
+              <Container type={type}>
+                <Image type={type} src={video.imgUrl} />
+                <Details type={type}>
+                  <ChannelImage type={type} src={channel.img} />
+                  <Texts>
+                    <Title>{video.title}</Title>
 
-              <ChannelName>{channel.ChannelName}</ChannelName>
-              <Info>
-                {video.views} views • {video.createdAt}
-              </Info>
-            </Texts>
-          </Details>
-        </Container>
-      </Link>
-      <A href={video.videoUrl} download={video.title}>
-        <DownloadForOfflineOutlinedIcon />
-      </A>
+                    <ChannelName>{channel.name}</ChannelName>
+                    <Info>
+                      {video.views} views •{" "}
+                      <TimeAgo datetime={video.createdAt} />
+                    </Info>
+                  </Texts>
+                </Details>
+              </Container>
+            </Link>
+            <A target="_blank" href={video.videoUrl} download={video.title}>
+              <DownloadForOfflineOutlinedIcon />
+            </A>
+          </>
+        )}
+      </>
     </Max>
   );
 };

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import styled from "styled-components";
 import Card from "../components/Card";
+import { Backend } from "../utils/backend";
 
 const Container = styled.div`
   display: flex;
@@ -16,9 +17,7 @@ const Search = () => {
 
   useEffect(() => {
     const fetchVideos = async () => {
-      const res = await axios.get(
-        `https://handsome-pink-hippo.cyclic.app/videos/search${query}`
-      );
+      const res = await axios.get(`${Backend}videos/search${query}`);
       setVideos(res.data);
     };
     fetchVideos();

@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Card from "./Card";
+import { Backend } from "../utils/backend";
 
 const Container = styled.div`
   flex: 2;
@@ -12,9 +13,7 @@ const Recommendation = ({ tags }) => {
 
   useEffect(() => {
     const fetchVideos = async () => {
-      const res = await axios.get(
-        `https://handsome-pink-hippo.cyclic.app/videos/tags?tags=${tags}`
-      );
+      const res = await axios.get(`${Backend}videos/tags?tags=${tags}`);
       setVideos(res.data);
     };
     fetchVideos();

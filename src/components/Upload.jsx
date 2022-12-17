@@ -9,6 +9,7 @@ import {
 import app from "../firebase";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { Backend } from "../utils/backend";
 
 const Container = styled.div`
   width: 100%;
@@ -20,6 +21,7 @@ const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 99999;
 `;
 
 const Wrapper = styled.div`
@@ -136,13 +138,9 @@ const Upload = ({ setOpen }) => {
 
   const handleUpload = async (e) => {
     e.preventDefault();
-    const res = await axios.post(
-      "https://handsome-pink-hippo.cyclic.app/videos",
-      { ...inputs, tags }
-    );
+    const res = await axios.post(`${Backend}videos`, { ...inputs, tags });
     setOpen(false);
-    res.status === 200 &&
-      navigate(`https://handsome-pink-hippo.cyclic.app/video/${res.data._id}`);
+    res.status === 200 && navigate(`${Backend}video/${res.data._id}`);
   };
 
   return (
@@ -152,7 +150,7 @@ const Upload = ({ setOpen }) => {
         <Title>Upload a New Video</Title>
         <Label>Video:</Label>
         {videoPerc > 0 ? (
-          "Uploading:" + videoPerc
+          "Uploading:" + videoPerc + "%"
         ) : (
           <Input
             type="file"
@@ -175,7 +173,7 @@ const Upload = ({ setOpen }) => {
         <Input
           type="text"
           placeholder="Separate the tags with commas."
-          onChance={handleTags}
+          onChange={handleTags}
         />
         <Label>Image:</Label>
         {imgPerc > 0 ? (

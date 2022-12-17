@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { Backend } from "../utils/backend";
 
 const Container = styled.div`
   display: flex;
@@ -42,9 +43,7 @@ const Comment = ({ comment }) => {
 
   useEffect(() => {
     const fetchComment = async () => {
-      const res = await axios.get(
-        `https://handsome-pink-hippo.cyclic.app/api/users/find/${comment.userId}`
-      );
+      const res = await axios.get(`${Backend}users/find/${comment.userId}`);
       setChannel(res.data);
     };
     fetchComment();

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Card from "../components/Card";
 import axios from "axios";
+import { Backend } from "../utils/backend";
 
 const Container = styled.div`
   display: flex;
@@ -19,9 +20,7 @@ const Home = ({ type }) => {
 
   useEffect(() => {
     const fetchVideos = async () => {
-      const res = await axios.get(
-        `https://handsome-pink-hippo.cyclic.app/api/videos/${type}`
-      );
+      const res = await axios.get(`${Backend}videos/${type}`);
       setVideos(res.data);
     };
     fetchVideos();

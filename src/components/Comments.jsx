@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
 import Comment from "./Comment";
+import { Backend } from "../utils/backend";
 
 const Container = styled.div``;
 
@@ -36,9 +37,7 @@ const Comments = ({ videoId }) => {
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        const res = await axios.get(
-          `https://handsome-pink-hippo.cyclic.app/comments/${videoId}`
-        );
+        const res = await axios.get(`${Backend}comments/${videoId}`);
         setComments(res.data);
       } catch (err) {}
     };

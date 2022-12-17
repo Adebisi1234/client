@@ -14,6 +14,8 @@ import axios from "axios";
 import { dislike, fetchSuccess, like } from "../redux/videoSlice";
 import { subscription } from "../redux/userSlice";
 import Recommendation from "../components/Recommendation";
+import { Backend } from "../utils/backend";
+import TimeAgo from "timeago-react";
 
 const VideoFrame = styled.video`
   max-height: 720px;
@@ -87,6 +89,17 @@ const Image = styled.img`
   border-radius: 50%;
 `;
 
+const Temp = styled.div`
+  width: 100%;
+  height: 100vh;
+  background-color: ${({ theme }) => theme.bgLighter};
+  color: ${({ theme }) => theme.text};
+  font-size: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
 const ChannelDetail = styled.div`
   display: flex;
   flex-direction: column;
@@ -118,7 +131,6 @@ const Subscribe = styled.button`
   padding: 10px 20px;
   cursor: pointer;
 `;
-
 const Video = () => {
   const { currentUser } = useSelector((state) => state.user);
   const { currentVideo } = useSelector((state) => state.video);
@@ -127,96 +139,108 @@ const Video = () => {
   const path = useLocation().pathname.split("/")[2];
 
   const [channel, setChannel] = useState({});
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const videoRes = await axios.get(
-          `https://handsome-pink-hippo.cyclic.app/api/videos/find/${path}`
-        );
+        const videoRes = await axios.get(`${Backend}/videos/find/${path}`);
         const channelRes = await axios.get(
-          `https://handsome-pink-hippo.cyclic.app/api/users/find/${videoRes.data.userId}`
+          `${Backend}/users/find/${videoRes.data.userId}`
         );
-        setChannel(channelRes.data);
+        if (!channelRes.data === null) {
+          setChannel(channelRes.data);
+        }
         dispatch(fetchSuccess(videoRes.data));
+        setLoading(false);
       } catch (err) {}
     };
     fetchData();
   }, [path, dispatch]);
 
   const handleLike = async () => {
-    await axios.put(`/users/like/${currentVideo._id}`);
+    await axios.put(`${Backend}/users/like/${currentVideo._id}`);
     dispatch(like(currentUser._id));
   };
   const handleDislike = async () => {
-    await axios.put(`/users/dislike/${currentVideo._id}`);
+    await axios.put(`${Backend}/users/dislike/${currentVideo._id}`);
     dispatch(dislike(currentUser._id));
   };
 
   const handleSub = async () => {
     currentUser.subscribedUsers.includes(channel._id)
-      ? await axios.put(`/users/unsub/${channel._id}`)
-      : await axios.put(`/users/sub/${channel._id}`);
+      ? await axios.put(`${Backend}/users/unsub/${channel._id}`)
+      : await axios.put(`${Backend}/users/sub/${channel._id}`);
     dispatch(subscription(channel._id));
   };
+
+  //TODO: DELETE VIDEO FUNCTIONALITY
+
   return (
     <Container>
-      <Content>
-        <VideoWrapper>
-          <VideoFrame src={currentVideo.videoUrl} controls />
-        </VideoWrapper>
-        <Title>{currentVideo.title}</Title>
-        <Details>
-          <Info>
-            {currentVideo.views} views • {currentVideo.createdAt}
-          </Info>
-          <Buttons>
-            <Button onClick={handleLike}>
-              {currentVideo.likes?.includes(currentUser?._id) ? (
-                <ThumbUpIcon />
-              ) : (
-                <ThumbUpOutlinedIcon />
-              )}{" "}
-              {currentVideo.likes?.length}
-            </Button>
-            <Button onClick={handleDislike}>
-              {currentVideo.dislikes?.includes(currentUser?._id) ? (
-                <ThumbDownIcon />
-              ) : (
-                <ThumbDownOffAltOutlinedIcon />
-              )}{" "}
-              Dislike
-            </Button>
-            <Button>
-              <ReplyOutlinedIcon /> Share
-            </Button>
-            <Button>
-              <AddTaskOutlinedIcon /> Save
-            </Button>
-          </Buttons>
-        </Details>
-        <Hr />
-        <Channel>
-          <ChannelInfo>
-            <Image src={channel.img} />
-            <ChannelDetail>
-              <ChannelName>{channel.name}</ChannelName>
-              <ChannelCounter>{channel.subscribers} subscribers</ChannelCounter>
-              <Description>{currentVideo.desc}</Description>
-            </ChannelDetail>
-          </ChannelInfo>
-          <Subscribe onClick={handleSub}>
-            {currentUser.subscribedUsers?.includes(channel._id)
-              ? "SUBSCRIBED"
-              : "SUBSCRIBE"}
-          </Subscribe>
-        </Channel>
-        <Hr />
-        <Comments videoId={currentVideo._id} />
-      </Content>
-      <Recommendation tags={currentVideo.tags} />
+      {loading && <Temp>Loading...</Temp>}
+      {!loading && (
+        <>
+          <Content>
+            <VideoWrapper>
+              <VideoFrame src={currentVideo.videoUrl} controls />
+            </VideoWrapper>
+            <Title>{currentVideo.title}</Title>
+            <Details>
+              <Info>
+                {currentVideo.views} views •{" "}
+                <TimeAgo datetime={currentVideo.createdAt} />
+              </Info>
+              <Buttons>
+                <Button onClick={handleLike}>
+                  {currentVideo.likes?.includes(currentUser?._id) ? (
+                    <ThumbUpIcon />
+                  ) : (
+                    <ThumbUpOutlinedIcon />
+                  )}{" "}
+                  {currentVideo.likes?.length}
+                </Button>
+                <Button onClick={handleDislike}>
+                  {currentVideo.dislikes?.includes(currentUser?._id) ? (
+                    <ThumbDownIcon />
+                  ) : (
+                    <ThumbDownOffAltOutlinedIcon />
+                  )}{" "}
+                  Dislike
+                </Button>
+                <Button>
+                  <ReplyOutlinedIcon /> Share
+                </Button>
+                <Button>
+                  <AddTaskOutlinedIcon /> Save
+                </Button>
+              </Buttons>
+            </Details>
+            <Hr />
+            <Channel>
+              <ChannelInfo>
+                <Image src={channel.img} />
+                <ChannelDetail>
+                  <ChannelName>{channel.name}</ChannelName>
+                  <ChannelCounter>
+                    {channel.subscribers} subscribers
+                  </ChannelCounter>
+                  <Description>{currentVideo.desc}</Description>
+                </ChannelDetail>
+              </ChannelInfo>
+              <Subscribe onClick={handleSub}>
+                {currentUser.subscribedUsers?.includes(channel._id)
+                  ? "SUBSCRIBED"
+                  : "SUBSCRIBE"}
+              </Subscribe>
+            </Channel>
+            <Hr />
+            <Comments videoId={currentVideo._id} />
+          </Content>
+          <Recommendation tags={currentVideo.tags} />
+        </>
+      )}
     </Container>
   );
 };
-
 export default Video;
