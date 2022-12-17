@@ -138,16 +138,7 @@ const Upload = ({ setOpen }) => {
 
   const handleUpload = async (e) => {
     e.preventDefault();
-    const res = await axios.post(
-      `${Backend}videos`,
-      { ...inputs, tags },
-      {
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const res = await axios.post(`${Backend}videos`, { ...inputs, tags });
     setOpen(false);
     res.status === 200 && navigate(`${Backend}video/${res.data._id}`);
   };

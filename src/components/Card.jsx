@@ -94,24 +94,16 @@ const Card = ({ type, video }) => {
     img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHN8VZBh3H-DJG7Cp3kfbRDnd7UF932qrhJMVqjA7uJw&s",
   });
   const [Loading, setLoading] = useState(true);
-  const [id, setId] = useState(isNull(video.userId));
-  function isNull(id) {
-    if (!id) {
-      return "639cdf7a75a30fb7c9ae2bfb";
-    } else return id;
-  }
   useEffect(() => {
     const fetchChannel = async () => {
       const res = await axios.get(
-        `https://handsome-pink-hippo.cyclic.app/api/users/find/${id}`
+        `https://handsome-pink-hippo.cyclic.app/api/users/find/${video.userId}`
       );
       if (res.data === null) {
         console.log("Null");
       } else {
         setChannel(await res.data);
       }
-      // console.log("res", res.data);
-      console.log(channel);
       setLoading(false);
     };
     fetchChannel();
