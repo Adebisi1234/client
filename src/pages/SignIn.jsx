@@ -72,7 +72,6 @@ const Link = styled.span`
 
 const SignIn = () => {
   const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -140,7 +139,7 @@ const SignIn = () => {
         />
         <Input
           placeholder="email"
-          onChange={(e) => setEmail(e.target.value)}
+          // onChange={(e) => setEmail(e.target.value)}
           readOnly
         />
         <Input
