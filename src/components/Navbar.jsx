@@ -8,7 +8,6 @@ import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../img/logo.png";
 import Upload from "./Upload";
-import { Backend } from "../utils/backend";
 
 const Container = styled.div`
   position: sticky;
