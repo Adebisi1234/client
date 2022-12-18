@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import styled from "styled-components";
 import Comment from "./Comment";
 import { Backend } from "../utils/backend";
-
+import Img from "./img";
 const Container = styled.div``;
 
 const NewComment = styled.div`
@@ -49,7 +49,7 @@ const Comments = ({ videoId }) => {
   return (
     <Container>
       <NewComment>
-        <Avatar src={currentUser.img} />
+        <Avatar src={currentUser ? currentUser.img : Img} />
         <Input placeholder="Add a comment..." />
       </NewComment>
       {comments.map((comment) => (

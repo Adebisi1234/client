@@ -44,7 +44,11 @@ const Comment = ({ comment }) => {
   useEffect(() => {
     const fetchComment = async () => {
       const res = await axios.get(`${Backend}users/find/${comment.userId}`);
-      setChannel(res.data);
+      if (res.data === null) {
+        console.log("Channel is null");
+      } else {
+        setChannel(await res.data);
+      }
     };
     fetchComment();
   }, [comment.userId]);

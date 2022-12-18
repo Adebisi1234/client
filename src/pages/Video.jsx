@@ -134,6 +134,7 @@ const Subscribe = styled.button`
 const Video = () => {
   const { currentUser } = useSelector((state) => state.user);
   const { currentVideo } = useSelector((state) => state.video);
+  console.log(currentUser && currentUser);
   const dispatch = useDispatch();
 
   const path = useLocation().pathname.split("/")[2];
@@ -144,34 +145,49 @@ const Video = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const videoRes = await axios.get(`${Backend}/videos/find/${path}`);
+        const videoRes = await axios.get(`${Backend}videos/find/${path}`);
         const channelRes = await axios.get(
-          `${Backend}/users/find/${videoRes.data.userId}`
+          `${Backend}users/find/${videoRes.data.userId}`
         );
-        if (!channelRes.data === null) {
-          setChannel(channelRes.data);
+        console.log(videoRes.data.userId);
+        if (channelRes.data === null) {
+          console.log("Channel is null");
+        } else {
+          setChannel(await channelRes.data);
+          setLoading(false);
         }
         dispatch(fetchSuccess(videoRes.data));
-        setLoading(false);
       } catch (err) {}
     };
     fetchData();
   }, [path, dispatch]);
 
   const handleLike = async () => {
-    await axios.put(`${Backend}/users/like/${currentVideo._id}`);
-    dispatch(like(currentUser._id));
+    if (currentUser) {
+      await axios.put(`${Backend}users/like/${currentVideo._id}`);
+      dispatch(like(currentUser && currentUser._id));
+    } else {
+      alert("You are not authorized");
+    }
   };
   const handleDislike = async () => {
-    await axios.put(`${Backend}/users/dislike/${currentVideo._id}`);
-    dispatch(dislike(currentUser._id));
+    if (currentUser) {
+      await axios.put(`${Backend}users/dislike/${currentVideo._id}`);
+      dispatch(dislike(currentUser && currentUser._id));
+    } else {
+      alert("You are not authorized");
+    }
   };
 
   const handleSub = async () => {
-    currentUser.subscribedUsers.includes(channel._id)
-      ? await axios.put(`${Backend}/users/unsub/${channel._id}`)
-      : await axios.put(`${Backend}/users/sub/${channel._id}`);
-    dispatch(subscription(channel._id));
+    if (currentUser) {
+      currentUser && currentUser.subscribedUsers.includes(channel._id)
+        ? await axios.put(`${Backend}users/unsub/${channel._id}`)
+        : await axios.put(`${Backend}users/sub/${channel._id}`);
+      dispatch(subscription(channel._id));
+    } else {
+      alert("You are not authorized");
+    }
   };
 
   //TODO: DELETE VIDEO FUNCTIONALITY
@@ -193,7 +209,9 @@ const Video = () => {
               </Info>
               <Buttons>
                 <Button onClick={handleLike}>
-                  {currentVideo.likes?.includes(currentUser?._id) ? (
+                  {currentVideo.likes?.includes(
+                    currentUser && currentUser?._id
+                  ) ? (
                     <ThumbUpIcon />
                   ) : (
                     <ThumbUpOutlinedIcon />
@@ -201,7 +219,9 @@ const Video = () => {
                   {currentVideo.likes?.length}
                 </Button>
                 <Button onClick={handleDislike}>
-                  {currentVideo.dislikes?.includes(currentUser?._id) ? (
+                  {currentVideo.dislikes?.includes(
+                    currentUser && currentUser?._id
+                  ) ? (
                     <ThumbDownIcon />
                   ) : (
                     <ThumbDownOffAltOutlinedIcon />
@@ -229,7 +249,8 @@ const Video = () => {
                 </ChannelDetail>
               </ChannelInfo>
               <Subscribe onClick={handleSub}>
-                {currentUser.subscribedUsers?.includes(channel._id)
+                {currentUser &&
+                currentUser.subscribedUsers?.includes(channel._id)
                   ? "SUBSCRIBED"
                   : "SUBSCRIBE"}
               </Subscribe>
