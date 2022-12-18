@@ -109,7 +109,7 @@ const Navbar = () => {
               onChange={(e) => setQ(e.target.value)}
             />
             <SearchOutlinedIcon
-              onClick={() => navigate(`${Backend}search?q=${q}`)}
+              onClick={() => navigate(`/videos/search?q=${q}`)}
             />
           </Search>
           {currentUser ? (
