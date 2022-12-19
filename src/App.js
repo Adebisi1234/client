@@ -21,6 +21,10 @@ const Main = styled.div`
 `;
 const Wrapper = styled.div`
   padding: 22px 50px;
+
+  @media (max-width: 768px) {
+    padding: 10px;
+  }
 `;
 
 function App() {

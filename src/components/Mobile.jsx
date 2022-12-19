@@ -22,6 +22,8 @@ const Container = styled.div`
   display: none;
   align-items: center;
   gap: 30px;
+  width: 100vw;
+  overflow-x: scroll;
   background-color: ${({ theme }) => theme.bgLighter};
   color: ${({ theme }) => theme.text};
   font-size: 14px;
