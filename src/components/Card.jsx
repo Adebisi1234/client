@@ -9,6 +9,22 @@ const Max = styled.div`
   position: relative;
 `;
 
+const pulse = keyframes`
+  0% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+`;
+
+const Skeleton = styled.div`
+  height: 100%;
+  width: 100%;
+  background-color: #828181;
+  animation: ${pulse} 2s infinite;
+`;
+
 const Container = styled.div`
   width: ${(props) => props.type !== "sm" && "330px"};
   margin-bottom: ${(props) => (props.type === "sm" ? "10px" : "45px")};
@@ -80,19 +96,7 @@ const Info = styled.div`
 `;
 
 const Card = ({ type, video }) => {
-  const [channel, setChannel] = useState({
-    _id: "639c875b243fca3f63ef8fa4",
-    name: "test",
-    email: "test@gmail.com",
-    password: "$2a$10$P5ekrn5tPLCWnC4bBNjyK.Hg6CY0Vv9eUjKc5yil7iNgTVMaij/1K",
-    subscribers: 0,
-    subscribedUsers: [],
-    fromGoogle: false,
-    createdAt: "2022-12-16T14:57:31.268Z",
-    updatedAt: "2022-12-16T14:57:31.268Z",
-    __v: 0,
-    img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHN8VZBh3H-DJG7Cp3kfbRDnd7UF932qrhJMVqjA7uJw&s",
-  });
+  const [channel, setChannel] = useState({});
   const [Loading, setLoading] = useState(true);
   useEffect(() => {
     const fetchChannel = async () => {
@@ -111,7 +115,33 @@ const Card = ({ type, video }) => {
   return (
     <Max>
       <>
-        {Loading && <Temp>Loading</Temp>}
+        {Loading && (
+          <>
+            <Link to={`/video/${video._id}`} style={{ textDecoration: "none" }}>
+              <Container type={type}>
+                <Skeleton></Skeleton>
+                <Details type={type}>
+                  <Skeleton></Skeleton>
+                  <Texts>
+                    <Title>
+                      <Skeleton></Skeleton>
+                    </Title>
+
+                    <ChannelName>
+                      <Skeleton></Skeleton>
+                    </ChannelName>
+                    <Info>
+                      <Skeleton></Skeleton>
+                    </Info>
+                  </Texts>
+                </Details>
+              </Container>
+            </Link>
+            <A>
+              <Skeleton></Skeleton>
+            </A>
+          </>
+        )}
         {!Loading && (
           <>
             <Link to={`/video/${video._id}`} style={{ textDecoration: "none" }}>

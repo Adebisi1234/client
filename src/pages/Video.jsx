@@ -1,6 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import ThumbUpOutlinedIcon from "@mui/icons-material/ThumbUpOutlined";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import ThumbDownOffAltOutlinedIcon from "@mui/icons-material/ThumbDownOffAltOutlined";
@@ -117,6 +117,22 @@ const ChannelCounter = styled.span`
   font-size: 12px;
 `;
 
+const pulse = keyframes`
+  0% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+`;
+
+const Skeleton = styled.div`
+  height: 100%;
+  width: 100%;
+  background-color: #828181;
+  animation: ${pulse} 2s infinite;
+`;
+
 const Description = styled.p`
   font-size: 14px;
 `;
@@ -194,7 +210,68 @@ const Video = () => {
 
   return (
     <Container>
-      {loading && <Temp>Loading...</Temp>}
+      {loading && (
+        <Content>
+          <VideoWrapper>
+            <Skeleton></Skeleton>
+          </VideoWrapper>
+          <Title>
+            <Skeleton></Skeleton>
+          </Title>
+          <Details>
+            <Info>
+              <Skeleton></Skeleton>
+            </Info>
+            <Buttons>
+              <Button onClick={handleLike}>
+                {currentVideo.likes?.includes(
+                  currentUser && currentUser?._id
+                ) ? (
+                  <Skeleton></Skeleton>
+                ) : (
+                  <Skeleton></Skeleton>
+                )}{" "}
+                {currentVideo.likes?.length}
+              </Button>
+              <Button onClick={handleDislike}>
+                {currentVideo.dislikes?.includes(
+                  currentUser && currentUser?._id
+                ) ? (
+                  <Skeleton></Skeleton>
+                ) : (
+                  <Skeleton></Skeleton>
+                )}{" "}
+                Dislike
+              </Button>
+              <Button>
+                <Skeleton></Skeleton> Share
+              </Button>
+              <Button>
+                <Skeleton></Skeleton> Save
+              </Button>
+            </Buttons>
+          </Details>
+          <Hr />
+          <Channel>
+            <ChannelInfo>
+              <Skeleton></Skeleton>
+              <ChannelDetail>
+                <Skeleton></Skeleton>
+                <ChannelCounter>
+                  {channel.subscribers} subscribers
+                </ChannelCounter>
+                <Description>{currentVideo.desc}</Description>
+              </ChannelDetail>
+            </ChannelInfo>
+            <Subscribe onClick={handleSub}>
+              {currentUser && currentUser.subscribedUsers?.includes(channel._id)
+                ? "SUBSCRIBED"
+                : "SUBSCRIBE"}
+            </Subscribe>
+          </Channel>
+          <Hr />
+        </Content>
+      )}
       {!loading && (
         <>
           <Content>
